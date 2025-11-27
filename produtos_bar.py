@@ -1,21 +1,18 @@
-# produtos_bar.py
+import openpyxl
+import os
 
-produtos = {
-    "cerveja lt": 5.00,
-    "cerveja gf": 15.00,
-    "refri lt": 6.00,
-    "refri ks": 8.00,
-    "água": 3.00,
-    "copão vd": 25.00,
-    "copão wk": 40.00,
-    "copão gin": 25.00,
-    "caipirinha": 25.00,
-    "caipiroska": 30.00,
-    "energetico": 12.00
-}
+# Caminho do arquivo Excel
+CAMINHO_EXCEL = os.path.join(os.path.dirname(__file__), "produtos.xlsx")
 
-def listar_produtos():
-    print("\n--- Cardápio ---")
-    for nome, preco in produtos.items():
-        print(f"{nome.capitalize()} - R$ {preco:.2f}")
-    print()
+produtos = {}
+
+# Carrega os produtos do Excel
+wb = openpyxl.load_workbook(CAMINHO_EXCEL)
+ws = wb.active
+
+for row in ws.iter_rows(min_row=2, values_only=True):  # Pula o cabeçalho
+    if row and len(row) >= 2:
+        nome, preco = row[:2]
+        # Só adiciona se nome for string e preco for número
+        if isinstance(nome, str) and nome and isinstance(preco, (int, float)):
+            produtos[nome.lower()] = float(preco)
